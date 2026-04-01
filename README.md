@@ -44,7 +44,10 @@ Results are stored in RAM / written to Disk
 | **RAM** | Holds active (in-use) data |
 | **Disk** | Stores persistent data |
 
-> 📸 *Suggested image:* A simple diagram showing this layered flow — `Code → OS → CPU/RAM`. Draw it or use a screenshot from a system diagram.
+> 📸 The screenshot below (Resource Monitor) shows exactly this in action — each row is a running process, with its own PID, thread count, and CPU share managed by the OS kernel.
+
+![Resource Monitor — CPU tab showing per-process thread and CPU usage](./images/resource-utilization-windows-3.png)
+*Windows Resource Monitor: Each row is a separate process (PID). Notice the Threads column — `prime95.exe` is pegging the CPU at 100%. This is the kernel in action: allocating CPU time to each process based on priority and availability.*
 
 ---
 
@@ -80,7 +83,7 @@ Modern CPUs (Intel's Hyper-Threading, AMD's SMT) allow each physical core to han
 - 8-core CPU with Hyper-Threading → **16 logical processors**
 - This is what you see in Task Manager as "logical processors"
 
-> 📸 *Suggested image:* Task Manager → Performance tab → CPU section. It shows your core count, logical processor count, and clock speed. Annotate the screenshot to label "Physical Cores" vs "Logical Processors".
+> 📸 *Tip:* Open Task Manager → **Performance → CPU** tab on your machine to see your own physical core count vs logical processor count.
 
 ---
 
@@ -114,7 +117,8 @@ A **process** is a running program. When you open VS Code, Chrome, or start a No
 - `node server.js` → 1 Node.js process
 - Chrome → many processes (one per tab, plus GPU, network, etc.)
 
-> 📸 *Suggested image:* Task Manager → Processes tab. Show Chrome with multiple processes listed. Add a note explaining that this is intentional (crash isolation).
+![Task Manager — Processes tab showing multiple app processes](./images/each%20process.png)
+*Task Manager → Processes tab: Microsoft Edge has **36 processes**, Skype has **7**, Outlook has **2**. Each number in parentheses is a separate OS process — not just a thread. This is intentional: if one tab crashes, it doesn't take down the whole browser.*
 
 ---
 
@@ -216,7 +220,10 @@ The thread pool handles operations that cannot be made non-blocking at the OS le
 
 > These 4 threads are managed by the OS and can run on any available CPU core — giving Node.js limited multi-core capability even without clustering.
 
-> 📸 *Suggested image:* A diagram showing the Event Loop in the center, with the thread pool on the side, and arrows showing work being offloaded and callbacks returning.
+> 📸 The Resource Monitor below shows this exact reality — hundreds of threads exist across processes, but only a handful actually consume CPU at any moment:
+
+![Resource Monitor — Threads column showing many threads per process](./images/resource-monitor.png)
+*Windows Resource Monitor → CPU tab: `System` has **228 threads**, `explorer.exe` has **79 threads** — yet CPU usage stays low. Most threads are in a **Waiting** state (blocked on I/O or sleeping). Only the kernel schedules them onto cores when they have work to do.*
 
 ---
 
@@ -344,29 +351,6 @@ if (cluster.isPrimary) {
 > You can have hundreds of threads, but only a few run at any moment — the OS kernel schedules them across available CPU cores, thousands of times per second.
 
 ---
-
-## 📸 Suggested Screenshots (from Task Manager)
-
-Add these to an `/images` folder and reference them in the sections above.
-
-| Screenshot | What to capture | Where to reference |
-|---|---|---|
-| `cpu-overview.png` | Performance tab → CPU (shows cores, logical processors) | CPU & Cores section |
-| `processes-list.png` | Processes tab (Chrome with multiple entries) | Process section |
-| `thread-count.png` | Details tab → add "Threads" column, sort by count | Thread section |
-| `node-process.png` | Run a Node.js app, find it in Details tab | Node.js section |
-
-**How to add the "Threads" column in Task Manager:**
-1. Open Task Manager → Details tab
-2. Right-click any column header → "Select Columns"
-3. Enable **Threads**
-4. Sort by thread count to observe high-thread processes
-
-```markdown
-<!-- Example image embed in README -->
-![CPU Overview](./images/cpu-overview.png)
-*Task Manager showing 8 physical cores and 16 logical processors with Hyper-Threading enabled.*
-```
 
 ---
 
