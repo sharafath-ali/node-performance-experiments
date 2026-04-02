@@ -108,7 +108,7 @@ Think of threads as individual tasks:
 - Running a computation
 - Rendering a UI element
 
-A **process** creates and manages threads. Every process has at least one thread (the main thread).
+A **process** owns its threads — but the kernel is what actually creates, schedules, and destroys them. The process (via its main thread) requests thread creation through OS APIs. Every process has at least one thread (the main thread).
 
 ---
 
