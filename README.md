@@ -395,6 +395,8 @@ if (cluster.isPrimary) {
 
 ### ⚔️ Worker Threads vs Clustering (Production Use Cases)
 
+![Worker Threads vs Clustering](./images/worker%20vs%20clusturing.png)
+
 **Why do both exist?**
 
 - **Worker Threads** = *"I need my JS code to run fast on multiple cores without splitting the app."*
