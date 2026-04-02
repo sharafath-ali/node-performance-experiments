@@ -136,10 +136,11 @@ sequenceDiagram
 * Multiple containers orchestrated by Kubernetes/ECS.
 * *(Note: In containerized environments, running single-process pods/containers and letting Kubernetes scale the horizontal instances is generally preferred over doing internal Node.js clustering.)*
 
-### 11. Interview Summary Cheat Sheet
-When asked about Node.js scaling, summarize with:
-* **"The Primary process manages workers; the Workers handle constraints and requests."**
-* Use **clustering** for multi-core scaling of I/O-heavy Web Servers.
-* Use **worker threads** specifically for CPU-heavy synchronous tasks.
-* Prefer a **load balancer** to scale horizontally across multiple distinct machines.
-* **Always prefer stateless architecture** (e.g., JWT) to avoid the architectural headaches and bottlenecks of sticky sessions.
+> [!TIP]
+> ### 💡 Bonus Note: 
+> If you are ever asked to summarize Node.js scaling strategy in an interview, keep these core concepts in mind:
+> * **"The primary process manages workers; the workers handle the actual requests."**
+> * Use **clustering** for multi-core scaling of I/O-heavy Web Servers.
+> * Use **worker threads** specifically for isolated, CPU-heavy synchronous tasks.
+> * Prefer a **load balancer** to scale horizontally across multiple distinct machines.
+> * **Always prefer stateless architecture** (e.g., JWT) to avoid the architectural headaches and bottlenecks that come with sticky sessions.
