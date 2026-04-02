@@ -240,27 +240,64 @@ The thread pool handles operations that cannot be made non-blocking at the OS le
 
 ## ❗ Async ≠ Multithreading
 
-This is a critical distinction that trips up many developers.
+Many developers confuse these two. They are completely different ideas.
 
-| Concept | What it means |
-|---|---|
-| **Async** | Non-blocking behavior — continue executing while waiting |
-| **Threads** | Actual parallel execution units |
+| Concept | What it actually means | In Node.js |
+|---|---|---|
+| **Async** | Non-blocking — the main thread does **not** wait for slow operations | Event Loop keeps running |
+| **Multithreading** | True parallel execution on multiple threads/cores at the same time | Only the libuv thread pool (4 threads) does this |
 
-**Example — reading a file:**
+- **Async** = "Don't make my main thread wait."
+- **Multithreading** = "Run multiple things at the exact same time on different cores."
+
+---
+
+### Example 1 — Classic Async (Callback Style)
 
 ```js
-fs.readFile('data.txt', (err, data) => {
-  console.log(data);
+console.log("1. Starting...");
+
+fs.readFile("data.txt", (err, data) => {
+  console.log("3. File content:", data); // ← runs LATER
 });
-console.log('This runs before the file is read!');
+
+console.log("2. This runs immediately!");
 ```
 
-- The `readFile` call is **async** (non-blocking to the Event Loop)
-- Internally, it's handled by a **libuv thread** from the pool
-- The JavaScript main thread never blocks
+**What happens:**
+- `fs.readFile` hands the work to the **libuv thread pool** and immediately returns
+- `console.log("2. This runs immediately!")` runs right away — the main thread never blocked
+- When the file is ready, the callback fires back on the **main thread**
 
-> Async is about *not waiting*. Threads are about *doing things in parallel*. Node uses both — but separately.
+---
+
+### Example 2 — Async/Await (Modern Style)
+
+```js
+async function readFileExample() {
+  console.log("1. Starting...");
+
+  const data = await fs.promises.readFile("data.txt", "utf8");
+
+  console.log("2. File content:", data); // ← waits, but without blocking
+
+  console.log("3. Done!");
+}
+```
+
+**What happens:**
+- `await` pauses **only this function** — not the entire app
+- The Event Loop stays free and can handle other requests in the meantime
+- Code reads top-to-bottom like sync code, but is still **non-blocking**
+
+---
+
+### Summary
+
+- **Async** → operation is offloaded; the main thread moves on; result comes back via callback/promise
+- **Multithreading** → multiple pieces of code run simultaneously on different cores
+
+> "Node.js is single-threaded for JavaScript, but async and non-blocking."
 
 ---
 
