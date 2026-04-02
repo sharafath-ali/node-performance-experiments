@@ -37,32 +37,6 @@ To prevent every process from trying to fork more processes (which would cause a
 
 ### 3. Request Flow
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant OS as 💻 OS / Node
-    participant Primary as 👑 Primary Process
-    participant Worker as 👷 Worker Process
-    
-    OS->>+Primary: Run `node index.js`
-    Note right of Primary: Takes role as Manager<br/>(cluster.isPrimary === true)
-    
-    loop For each CPU Core
-        Primary->>+Worker: cluster.fork()
-    end
-    
-    Note right of Worker: Executes identical `index.js` file
-    Note right of Worker: Internally tagged as Child<br/>(cluster.isPrimary === false)
-    
-    Worker->>Worker: Bypasses `if` block, executes `else` block
-    Worker-->>-Worker: Starts Express server on Port 3000
-
-    Primary-->>-OS: Initialization Complete
-    
-    Note over OS,Worker: --- ✨ Application Ready for Traffic ✨ ---
-    
-    OS->>Worker: Distributes incoming HTTP Connections
-```
 
 1. App starts → primary process runs.
 2. Primary forks multiple workers (based on CPU cores).
