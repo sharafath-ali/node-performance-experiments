@@ -38,11 +38,11 @@ Results are stored in RAM / written to Disk
 
 | Layer | Role |
 |---|---|
-| **Process** | The running application |
-| **OS / Kernel** | Manages all processes, allocates resources |
-| **CPU** | Actually executes instructions |
-| **RAM** | Holds active (in-use) data |
-| **Disk** | Stores persistent data |
+| **Process** | Running instance of your program (code + data in memory) |
+| **OS / Kernel** | Manages all processes, schedules CPU time, allocates memory & resources |
+| **CPU** | Executes the actual instructions of the process |
+| **RAM** | Holds the active code and data that the CPU is using right now |
+| **Disk** | Stores the program files and persistent/long-term data |
 
 > 📸 The screenshot below (Resource Monitor) shows exactly this in action — each row is a running process, with its own PID, thread count, and CPU share managed by the OS kernel.
 
