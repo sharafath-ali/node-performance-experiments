@@ -85,6 +85,16 @@ Modern CPUs (Intel's Hyper-Threading, AMD's SMT) allow each physical core to han
 
 > 📸 *Tip:* Open Task Manager → **Performance → CPU** tab on your machine to see your own physical core count vs logical processor count.
 
+### 🔍 How to See All Logical Processors in Detail
+
+By default, Task Manager shows a **single combined CPU graph**. To clearly distinguish physical cores from logical processors:
+
+1. Open **Task Manager** → **Performance** → **CPU** tab
+2. **Right-click** anywhere on the CPU graph
+3. Select **"Change graph to"** → **"Logical processors"**
+
+This reveals **all 16 individual bars** (one per logical processor), making it immediately visible how Hyper-Threading maps 8 physical cores into 16 logical execution units.
+
 ---
 
 ## 🧵 What is a Thread?
