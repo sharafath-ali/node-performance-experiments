@@ -319,26 +319,49 @@ The main thread stays free for other work during this entire wait. This is the c
 
 ## 🧵 Worker Threads
 
-Worker Threads allow Node.js to run JavaScript in **parallel**, inside the same process.
+Worker Threads let you run JavaScript code in **true parallel** on multiple CPU cores — something the Event Loop alone cannot do.
 
 ```js
-const { Worker } = require('worker_threads');
-const worker = new Worker('./heavy-task.js');
+const { Worker, isMainThread, parentPort } = require('worker_threads');
+
+if (isMainThread) {
+  // Main thread
+  const worker = new Worker(__filename);
+
+  worker.on('message', (result) => {
+    console.log('Result from worker:', result);
+  });
+
+  worker.postMessage('start');
+} else {
+  // This runs inside the worker thread
+  parentPort.on('message', () => {
+    const result = doHeavyComputation(); // CPU-intensive task
+    parentPort.postMessage(result);
+  });
+}
 ```
 
-**Important details:**
+**How Worker Threads work:**
 
-- Each worker has its **own isolated JavaScript heap** (separate memory by default)
-- Memory can be *explicitly shared* using `SharedArrayBuffer`
-- Workers communicate with the main thread via `postMessage()`
-- Best used for **CPU-intensive tasks** (image processing, heavy computation, encryption)
+- Each worker runs in its own **V8 isolate** — a completely separate JavaScript environment with its own event loop and memory
+- Workers communicate with the main thread via `postMessage()` / `parentPort.on('message')`
+- Memory is isolated by default; can be explicitly shared using `SharedArrayBuffer` (advanced)
 
-**When to use Worker Threads vs async:**
+**Is it real multithreading?**
+
+Yes. Unlike the libuv thread pool (which only helps with I/O and crypto), Worker Threads let **your own JavaScript logic** run in parallel on separate CPU cores — inside a single process.
+
+**When to use:**
 
 | Scenario | Approach |
 |---|---|
-| Waiting for I/O (file, network) | Async / Event Loop |
-| Heavy CPU computation | Worker Threads |
+| File I/O, network requests | Async / Event Loop |
+| CPU-heavy tasks (calculations, image processing, compression, encryption) | Worker Threads |
+
+> **Simple rule:** I/O bound → async. CPU bound → Worker Threads.
+
+Worker Threads give you real multi-core power while staying inside one process — lighter than spawning separate processes with `cluster`.
 
 ---
 
