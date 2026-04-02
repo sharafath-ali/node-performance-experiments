@@ -167,6 +167,8 @@ From a human perspective, it looks like everything is running simultaneously. At
 
 ## 🔁 How Everything Relates
 
+![Processes, Threads, and CPU Cores](./images/process%20and%20treads%20and%20cpu%20cores.png)
+
 ```
 Processes
  └── Threads (one or more per process)
