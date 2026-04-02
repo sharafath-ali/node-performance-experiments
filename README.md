@@ -168,17 +168,18 @@ From a human perspective, it looks like everything is running simultaneously. At
 ## 🔁 How Everything Relates
 
 ```
-CPU
- └── Cores (physical execution units)
-      └── Logical Processors (with Hyper-Threading)
-           └── Threads (scheduled by the Kernel)
-                └── Processes (contain one or more threads)
+Processes
+ └── Threads (one or more per process)
+       └── Scheduled by Kernel
+             └── onto Logical Processors (with Hyper-Threading)
+                   └── on Physical Cores
+                         └── inside CPU
 ```
 
-- **Process** contains threads
-- **Threads** run on cores
-- **CPU** executes threads
-- **Kernel** schedules and manages all of it
+- **Processes** own threads
+- **Kernel** schedules threads onto logical processors
+- **Logical processors** map to physical cores (via Hyper-Threading)
+- **Physical cores** are the actual hardware that executes instructions
 
 ---
 
