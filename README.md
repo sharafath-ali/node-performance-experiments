@@ -352,14 +352,16 @@ if (isMainThread) {
 
 Yes. Unlike the libuv thread pool (which only helps with I/O and crypto), Worker Threads let **your own JavaScript logic** run in parallel on separate CPU cores — inside a single process.
 
-**When to use:**
+**I/O-Bound vs CPU-Bound (When to use what)**
 
-| Scenario | Approach |
-|---|---|
-| File I/O, network requests | Async / Event Loop |
-| CPU-heavy tasks (calculations, image processing, compression, encryption) | Worker Threads |
+These terms just describe what is slowing your program down:
 
-> **Simple rule:** I/O bound → async. CPU bound → Worker Threads.
+- **I/O-bound:** Your app spends most time waiting on stuff outside the CPU — like reading files, hitting databases, network calls, or APIs. The CPU sits idle while it waits. That's why async shines here: the Event Loop keeps going, so there is no freeze.
+- **CPU-bound:** The bottleneck is raw computation — big loops, heavy math, image filters, encryption, video encoding. The CPU works hard, no waiting — just grinding. Here, single-threaded JS blocks everything. Worker Threads or clustering help by spreading this work across multiple cores.
+
+**Quick rule:**
+- File/network/database? → **I/O-bound** → use async (Event Loop)
+- Heavy math/processing? → **CPU-bound** → need parallelism (Worker Threads)
 
 Worker Threads give you real multi-core power while staying inside one process — lighter than spawning separate processes with `cluster`.
 
