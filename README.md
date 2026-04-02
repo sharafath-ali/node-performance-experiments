@@ -440,7 +440,44 @@ Clustering scales the entire server to handle more traffic. Worker threads handl
 
 ---
 
-## 🚀 Next Steps (Experiments)
+## 🧪 Hands-On Experiment: Event Loop Blocking vs Worker Threads
+
+To see this all in action, there is test code located in the `server-experiment` folder. This is a real Node.js server that proves everything discussed above.
+
+### The Routes
+
+The server exposes three routes:
+
+1. `GET /fast` 
+   - **What it does:** Instantly returns a string.
+   - **Proves:** Extremely fast non-blocking operation.
+   
+2. `GET /slow`
+   - **What it does:** Runs a massive calculation (a `for` loop 5 billion times) directly on the **main thread**.
+   - **Proves:** The event loop gets strictly blocked! No other users get served while this loop runs.
+
+3. `GET /worker`
+   - **What it does:** Runs the *exact same* massive calculation, but offloads it to a **Worker Thread**.
+   - **Proves:** True multithreading. The worker does the heavy lifting on a separate CPU core, keeping the main event loop completely free.
+
+### How to Run the Experiment
+
+1. Navigate to the folder:  
+   `cd server-experiment`
+2. Start the server:  
+   `node server.js`
+3. **Test 1 — The Blocked Event Loop:**
+   - Open a browser tab and load: `http://localhost:3000/slow` (It will hang for a few seconds).
+   - *Immediately* open a second tab and load: `http://localhost:3000/fast`.
+   - **Result:** The `/fast` tab will just sit there loading, stuck waiting. The Event Loop is entirely blocked by the heavy math on the first tab!
+4. **Test 2 — The Free Event Loop (Worker Threads):**
+   - In the first tab, load: `http://localhost:3000/worker`.
+   - *Immediately* switch to the second tab and load: `http://localhost:3000/fast`.
+   - **Result:** The `/fast` tab loads **instantly**, while the `/worker` tab finishes its calculation in the background. The Event Loop is completely free!
+
+---
+
+## 🚀 Next Steps
 
 - [ ] Implement a basic HTTP server and observe its process in Task Manager
 - [ ] Add clustering and observe multiple Node.js processes appear
