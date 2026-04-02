@@ -17,11 +17,11 @@ graph TD
 
 ## Node.js Clustering – Key Notes
 
-### 1. Why `cluster.isPrimary` + `else` exists?
-* The same file runs in **all processes** (primary + workers).
-* `cluster.isPrimary` → runs **only in the main (manager) process**.
-* `else` → runs in **worker processes**.
-* Without this separation, workers would keep forking themselves, resulting in an **infinite loop**.
+### 1. Why `if(cluster.isPrimary)` + `else` exists?
+
+To prevent every process from trying to fork more processes (which would cause a catastrophic infinite loop of forks), we use `cluster.isPrimary` to designate roles:
+* **The `if (cluster.isPrimary)` block:** Checks if the current process is the main manager/orchestrator. When you first run `node index.js`, the OS process started is the Primary. It executes this specific block, taking on the role of forking child workers.
+* **The `else` block:** The worker processes created by `cluster.fork()` are essentially brand new instances of Node.js that execute `index.js` again from the very top. However, since they were spawned as child node processes, their internal `cluster.isPrimary` flag will be `false`. As a result, their execution bypasses the `if` and falls straight into the `else` block, where they start the actual Express server and begin listening for requests.
 
 ### 2. Roles
 
@@ -39,17 +39,29 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant OS as OS / Node
-    participant Primary as Primary Process
-    participant Worker as Worker Process
+    autonumber
+    participant OS as 💻 OS / Node
+    participant Primary as 👑 Primary Process
+    participant Worker as 👷 Worker Process
     
-    OS->>Primary: App starts
-    Note over Primary: cluster.isPrimary === true
-    Primary->>Worker: cluster.fork() based on CPU cores
-    Note over Worker: Runs the same file again
-    Note over Worker: cluster.isPrimary === false (goes to `else`)
-    Worker->>Worker: Starts Express server (app.listen)
-    OS->>Worker: Connections are distributed across workers
+    OS->>+Primary: Run `node index.js`
+    Note right of Primary: Takes role as Manager<br/>(cluster.isPrimary === true)
+    
+    loop For each CPU Core
+        Primary->>+Worker: cluster.fork()
+    end
+    
+    Note right of Worker: Executes identical `index.js` file
+    Note right of Worker: Internally tagged as Child<br/>(cluster.isPrimary === false)
+    
+    Worker->>Worker: Bypasses `if` block, executes `else` block
+    Worker-->>-Worker: Starts Express server on Port 3000
+
+    Primary-->>-OS: Initialization Complete
+    
+    Note over OS,Worker: --- ✨ Application Ready for Traffic ✨ ---
+    
+    OS->>Worker: Distributes incoming HTTP Connections
 ```
 
 1. App starts → primary process runs.
