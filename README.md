@@ -393,14 +393,23 @@ if (cluster.isPrimary) {
 - Each worker process can run on a **different CPU core**
 - Workers have **completely separate memory** (no sharing)
 
-**Worker Threads vs Clustering:**
+### ⚔️ Worker Threads vs Clustering (Production Use Cases)
 
-| | Worker Threads | Clustering |
-|---|---|---|
-| Memory | Shared process, isolated JS heaps | Completely separate processes |
-| Communication | `postMessage()` | IPC (Inter-Process Communication) |
-| Use case | CPU-heavy JS work | Scaling I/O / request handling |
-| CPU cores used | Shares process's core allocation | Each process gets its own core |
+**Why do both exist?**
+
+- **Worker Threads** = *"I need my JS code to run fast on multiple cores without splitting the app."*
+- **Clustering** = *"I need to handle 10k users at once — spread the load."*
+
+In production, it depends on what you're solving:
+
+1. **When to use Clustering:**
+   If you need to scale your entire app to handle many simultaneous clients, use clustering. It creates multiple processes (often one per CPU core) so your app can handle far more incoming connections in parallel. It scales the *entire server*.
+
+2. **When to use Worker Threads:**
+   Ideal for offloading CPU-heavy tasks — like encryption, data parsing, or image processing — without blocking the main event loop. Use workers when you have isolated, intense computations that would otherwise slow down request handling for everyone else.
+
+**In short:**
+Clustering scales the entire server to handle more traffic. Worker threads handle specific heavy tasks underneath. Both can be combined if your app needs both high concurrency and heavy computation.
 
 ---
 
