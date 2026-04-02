@@ -41,6 +41,11 @@ function createWorker() {
 }
 
 // 3. Worker thread route (doesn't block the main thread)
+// 💡 WHY IS THIS FASTER?
+// Instead of 1 core counting to 5 Billion linearly, we spawn 8 separate Worker Threads.
+// The 5 Billion loops are divided by 8, meaning each thread only counts to 625 Million.
+// Since these 8 threads run simultaneously across 8 CPU cores, the overall calculation 
+// finishes roughly 8x faster, AND our main event loop remains 100% free for other users!
 app.get('/worker', (req, res) => {
   console.log('Starting heavy task on worker thread (Event loop is free!)...');
 
