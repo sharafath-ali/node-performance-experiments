@@ -118,10 +118,10 @@ A **process** is a running program. When you open VS Code, Chrome, or start a No
 
 **Key properties of a process:**
 
-- Has its **own isolated memory space** (RAM)
+- Has its **own isolated virtual memory space** (RAM)
 - Cannot directly access another process's memory
-- Contains **one or more threads**
-- Is managed by the OS kernel
+- Contains **one or more threads** (at least the main thread)
+- Is created, scheduled, and managed by the OS kernel
 
 **Examples:**
 - `node server.js` → 1 Node.js process
