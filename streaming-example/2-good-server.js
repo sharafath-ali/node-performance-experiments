@@ -7,8 +7,10 @@ const filePath = path.join(__dirname, 'large-file.txt');
 
 // Helper to log memory usage
 function logMemoryUsage() {
-  const used = process.memoryUsage().heapUsed / 1024 / 1024;
-  console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+  // RSS (Resident Set Size) tracks total memory allocated for the process execution,
+  // including C++ execution and Buffers. heapUsed only tracks Javascript objects!
+  const rss = process.memoryUsage().rss / 1024 / 1024;
+  console.log(`Total memory usage (RSS): ${Math.round(rss * 100) / 100} MB`);
 }
 
 server.on('request', (req, res) => {

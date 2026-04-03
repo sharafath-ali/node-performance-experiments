@@ -44,6 +44,12 @@ node 2-good-server.js
 * Open a browser and go to `http://localhost:3001`.
 * Watch your terminal. You will see the memory usage stays incredibly low (often under 30MB), no matter how big the file is! This is because it streams the file in small chunks.
 
+### 📊 The Results
+
+Here is a side-by-side comparison of the terminal outputs. Notice how the bad server spikes to over 500MB of RAM, while the good server stays steadily around 30MB:
+
+![RAM Usage Difference](./ram-usage-diff.png)
+
 ---
 
 ✅ **One-line summary:** Stream processes data piece-by-piece rather than loading everything into memory at once, preventing memory explosion and improving initial response times for large files.
