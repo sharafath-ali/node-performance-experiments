@@ -2,6 +2,29 @@
 
 This directory contains a standalone example of how to implement **Node.js Clustering** to utilize multiple CPU cores and enhance application performance. 
 
+## 🧠 Node.js Clustering – Short Note
+
+In Node.js, clustering allows you to run multiple processes (workers) to utilize multi-core CPUs.
+
+A primary (master) process:
+* Creates (forks) worker processes
+* Accepts incoming connections
+* Distributes them across workers
+
+By default, it uses round-robin scheduling (SCHED_RR):
+* Each new connection is sent to the next worker in sequence
+* Ensures fairly even load distribution
+
+This load balancing is handled internally by Node.js, so:
+* You don’t see or manage it manually
+* It works automatically once clustering is enabled
+
+---
+
+✅ One-line summary
+
+Node.js clustering uses an internal primary process to distribute connections across worker processes using round-robin, and this happens automatically behind the scenes.
+
 ## 🧠 Architecture Overview
 
 Node.js runs in a single-threaded event loop. To utilize multi-core systems efficiently, the `cluster` module allows you to create child processes (workers) that share the same server ports.
