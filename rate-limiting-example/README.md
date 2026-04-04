@@ -29,6 +29,8 @@ This project implements a simple rule:
 * 6th request → ❌ `429 Too Many Requests`
 * After 10 seconds → 🔄 Reset
 
+![Rate Limiting Terminal Output](./image.png)
+
 ---
 
 ## 🚀 Run Locally
