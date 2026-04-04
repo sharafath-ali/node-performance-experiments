@@ -1,0 +1,22 @@
+{
+  "name": "profiling-example",
+  "version": "1.0.0",
+  "description": "Demonstration of Node.js Profiling CPU & Memory problems.",
+  "main": "server-problem.js",
+  "scripts": {
+    "start:problem": "node server-problem.js",
+    "start:fixed": "node server-fixed.js",
+    "profile:cpu": "clinic doctor -- node server-problem.js",
+    "profile:memory": "clinic heapprofiler -- node server-problem.js",
+    "test:slow": "autocannon -c 100 -d 10 http://localhost:3000/slow-cpu",
+    "test:fast": "autocannon -c 100 -d 10 http://localhost:3000/fast",
+    "test:leak": "autocannon -c 50 -d 30 http://localhost:3000/leak"
+  },
+  "keywords": [
+    "profiling",
+    "clinic.js",
+    "performance"
+  ],
+  "author": "",
+  "license": "ISC"
+}
