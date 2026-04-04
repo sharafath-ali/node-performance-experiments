@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress; 
     
     // Check how many times they've visited. Default to 0.
-    let count = requestCounts.get(ip) ;
+    let count = requestCounts.get(ip) || 0;
     count++;
     requestCounts.set(ip, count);
 
