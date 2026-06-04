@@ -246,6 +246,12 @@ npx autocannon -c 5 -d 30 http://localhost:3000/leak
 
 The same applies to `clinic flame` and `clinic heapprofile` against the `/leak` endpoint.
 
+> **Similarly for the CPU bottleneck:** When hitting `/slow-cpu` with high concurrency,
+> Clinic Doctor flags **CPU Usage** and **Event Loop Delay** — the 500M-iteration
+> synchronous loop pegs the main thread, so no other request can be handled until it finishes.
+> The event loop delay flatlines at tens of thousands of milliseconds, which is the clearest
+> signal that your code is blocking the thread. See the [CPU Bottleneck report](#-cpu-bottleneck--clinic-doctor-report) below.
+
 ---
 
 ## 🔴 CPU Bottleneck — Clinic Doctor Report
