@@ -103,3 +103,6 @@ dist
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# Clinic.js profiling output
+.clinic/
