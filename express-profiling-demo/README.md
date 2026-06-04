@@ -198,16 +198,9 @@ npm run load:leak              # autocannon /leak       5c 60s
 
 - All Clinic.js metrics stay green — use as a **control/baseline** to compare against the broken endpoints.
 
----
-
-## Tips
-
-- Always run Autocannon in a **separate terminal** from Clinic.
-- Let load run for at least **20–30 seconds** so Clinic collects enough samples.
-- The `.clinic/` output directory is already in `.gitignore`.
-- Each Clinic run creates a timestamped sub-folder inside `.clinic/` — old reports are preserved.
 
 ---
+
 
 ## ⚠️ Avoiding OOM Crashes During `/leak` Profiling
 
