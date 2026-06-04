@@ -224,7 +224,13 @@ Error: No files matching the pattern found
 > demand from the leak kept growing faster than GC could free memory — so it hit the hard
 > ceiling and the process was killed.
 
-![Node.js heap growing to 4 GB and hitting the OOM limit](./clinic-memory-leak-profiling/node_oom_heap_diagram.png)
+**Clinic Doctor report** — Memory Usage (top-right) climbs steadily to ~3,000 MB then flatlines at the heap limit before the crash:
+
+![Clinic Doctor showing memory usage climbing to 4 GB](./clinic-memory-leak-profiling/memoryissue.png)
+
+**Terminal output** — the last few GC cycles show the Mark-Compact collector trying to reduce from 4,095 MB → 4,095 MB (no progress), then the fatal OOM:
+
+![Terminal showing the OOM fatal error and last GC output](./clinic-memory-leak-profiling/outofmemory.png)
 
 **Use low concurrency** so the process survives long enough for Clinic to collect data and generate the report:
 
