@@ -6,7 +6,7 @@
 
 ## 📖 Why This Repository?
 
-Before optimizing a Node.js application, you need to understand *why* it behaves the way it does at a system level.
+Before optimizing a Node.js application, you need to understand _why_ it behaves the way it does at a system level.
 
 This repository explores:
 
@@ -36,18 +36,18 @@ CPU executes instructions
 Results are stored in RAM / written to Disk
 ```
 
-| Layer | Role |
-|---|---|
-| **Process** | Running instance of your program (code + data in memory) |
+| Layer           | Role                                                                    |
+| --------------- | ----------------------------------------------------------------------- |
+| **Process**     | Running instance of your program (code + data in memory)                |
 | **OS / Kernel** | Manages all processes, schedules CPU time, allocates memory & resources |
-| **CPU** | Executes the actual instructions of the process |
-| **RAM** | Holds the active code and data that the CPU is using right now |
-| **Disk** | Stores the program files and persistent/long-term data |
+| **CPU**         | Executes the actual instructions of the process                         |
+| **RAM**         | Holds the active code and data that the CPU is using right now          |
+| **Disk**        | Stores the program files and persistent/long-term data                  |
 
 > 📸 The screenshot below (Resource Monitor) shows exactly this in action — each row is a running process, with its own PID, thread count, and CPU share managed by the OS kernel.
 
 ![Resource Monitor — CPU tab showing per-process thread and CPU usage](./images/resource-utilization-windows-3.png)
-*Windows Resource Monitor: Each row is a separate process (PID). Notice the Threads column — `prime95.exe` is pegging the CPU at 100%. This is the kernel in action: allocating CPU time to each process based on priority and availability.*
+_Windows Resource Monitor: Each row is a separate process (PID). Notice the Threads column — `prime95.exe` is pegging the CPU at 100%. This is the kernel in action: allocating CPU time to each process based on priority and availability._
 
 ---
 
@@ -64,7 +64,7 @@ The **kernel** is the core of your operating system. It's not something you inte
 
 **One-line mental model:**
 
-> The CPU does the work. The kernel decides *who* gets to use the CPU and *when*.
+> The CPU does the work. The kernel decides _who_ gets to use the CPU and _when_.
 
 ---
 
@@ -83,7 +83,7 @@ Modern CPUs (Intel's Hyper-Threading, AMD's SMT) allow each physical core to han
 - 8-core CPU with Hyper-Threading → **16 logical processors**
 - This is what you see in Task Manager as "logical processors"
 
-> 📸 *Tip:* Open Task Manager → **Performance → CPU** tab on your machine to see your own physical core count vs logical processor count.
+> 📸 _Tip:_ Open Task Manager → **Performance → CPU** tab on your machine to see your own physical core count vs logical processor count.
 
 ### 🔍 How to See All Logical Processors in Detail
 
@@ -124,11 +124,12 @@ A **process** is a running program. When you open VS Code, Chrome, or start a No
 - Is created, scheduled, and managed by the OS kernel
 
 **Examples:**
+
 - `node server.js` → 1 Node.js process
 - Chrome → many processes (one per tab, plus GPU, network, etc.)
 
 ![Task Manager — Processes tab showing multiple app processes](./images/each%20process.png)
-*Task Manager → Processes tab: Microsoft Edge has **36 processes**, Skype has **7**, Outlook has **2**. Each number in parentheses is a separate OS process — not just a thread. This is intentional: if one tab crashes, it doesn't take down the whole browser.*
+_Task Manager → Processes tab: Microsoft Edge has **36 processes**, Skype has **7**, Outlook has **2**. Each number in parentheses is a separate OS process — not just a thread. This is intentional: if one tab crashes, it doesn't take down the whole browser._
 
 ---
 
@@ -138,12 +139,12 @@ This is one of the most common confusions.
 
 **You can have 136 threads running on only 8 cores.**
 
-How? Because threads aren't always *actively running*. At any moment, a thread is in one of these states:
+How? Because threads aren't always _actively running_. At any moment, a thread is in one of these states:
 
-| State | Meaning |
-|---|---|
-| **Running** | Currently executing on a CPU core |
-| **Ready** | Waiting for a free core |
+| State                  | Meaning                                        |
+| ---------------------- | ---------------------------------------------- |
+| **Running**            | Currently executing on a CPU core              |
+| **Ready**              | Waiting for a free core                        |
 | **Waiting / Sleeping** | Blocked on I/O, timer, or lock — not using CPU |
 
 At any given instant, only **8 threads** (on an 8-core machine) are truly running. The rest are waiting.
@@ -223,20 +224,20 @@ Node.js uses **libuv**, a C library that provides the event loop and a thread po
 
 The thread pool handles operations that cannot be made non-blocking at the OS level:
 
-| Operation | Uses Thread Pool? |
-|---|---|
-| File system I/O (`fs.*`) | ✅ Yes |
-| `dns.lookup()` (blocking DNS) | ✅ Yes |
-| Crypto (`bcrypt`, `pbkdf2`, `scrypt`) | ✅ Yes |
-| `dns.resolve()` (non-blocking DNS) | ❌ No — uses OS async |
-| Network I/O (TCP, HTTP) | ❌ No — OS handles async |
+| Operation                             | Uses Thread Pool?        |
+| ------------------------------------- | ------------------------ |
+| File system I/O (`fs.*`)              | ✅ Yes                   |
+| `dns.lookup()` (blocking DNS)         | ✅ Yes                   |
+| Crypto (`bcrypt`, `pbkdf2`, `scrypt`) | ✅ Yes                   |
+| `dns.resolve()` (non-blocking DNS)    | ❌ No — uses OS async    |
+| Network I/O (TCP, HTTP)               | ❌ No — OS handles async |
 
 > These 4 threads are managed by the OS and can run on any available CPU core — giving Node.js limited multi-core capability even without clustering.
 
 > 📸 The Resource Monitor below shows this exact reality — hundreds of threads exist across processes, but only a handful actually consume CPU at any moment:
 
 ![Resource Monitor — Threads column showing many threads per process](./images/resource-monitor.png)
-*Windows Resource Monitor → CPU tab: `System` has **228 threads**, `explorer.exe` has **79 threads** — yet CPU usage stays low. Most threads are in a **Waiting** state (blocked on I/O or sleeping). Only the kernel schedules them onto cores when they have work to do.*
+_Windows Resource Monitor → CPU tab: `System` has **228 threads**, `explorer.exe` has **79 threads** — yet CPU usage stays low. Most threads are in a **Waiting** state (blocked on I/O or sleeping). Only the kernel schedules them onto cores when they have work to do._
 
 ---
 
@@ -244,10 +245,10 @@ The thread pool handles operations that cannot be made non-blocking at the OS le
 
 Many developers confuse these two. They are completely different ideas.
 
-| Concept | What it actually means | In Node.js |
-|---|---|---|
-| **Async** | Non-blocking — the main thread does **not** wait for slow operations | Event Loop keeps running |
-| **Multithreading** | True parallel execution on multiple threads/cores at the same time | Only the libuv thread pool (4 threads) does this |
+| Concept            | What it actually means                                               | In Node.js                                       |
+| ------------------ | -------------------------------------------------------------------- | ------------------------------------------------ |
+| **Async**          | Non-blocking — the main thread does **not** wait for slow operations | Event Loop keeps running                         |
+| **Multithreading** | True parallel execution on multiple threads/cores at the same time   | Only the libuv thread pool (4 threads) does this |
 
 - **Async** = "Don't make my main thread wait."
 - **Multithreading** = "Run multiple things at the exact same time on different cores."
@@ -267,6 +268,7 @@ console.log("2. This runs immediately!");
 ```
 
 **What happens:**
+
 - `fs.readFile` hands the work to the **libuv thread pool** and immediately returns
 - `console.log("2. This runs immediately!")` runs right away — the main thread never blocked
 - When the file is ready, the callback fires back on the **main thread**
@@ -288,6 +290,7 @@ async function readFileExample() {
 ```
 
 **What happens:**
+
 - `await` pauses **only this function** — not the entire app
 - The Event Loop stays free and can handle other requests in the meantime
 - Code reads top-to-bottom like sync code, but is still **non-blocking**
@@ -305,7 +308,7 @@ async function readFileExample() {
 
 ## 📁 File I/O — Why It Uses a Thread Pool
 
-File reads/writes are **not CPU-intensive**. They are *waiting* operations — waiting for the disk to respond.
+File reads/writes are **not CPU-intensive**. They are _waiting_ operations — waiting for the disk to respond.
 
 ```
 Main Thread → asks for file read → libuv thread pool handles it
@@ -324,20 +327,20 @@ The main thread stays free for other work during this entire wait. This is the c
 Worker Threads let you run JavaScript code in **true parallel** on multiple CPU cores — something the Event Loop alone cannot do.
 
 ```js
-const { Worker, isMainThread, parentPort } = require('worker_threads');
+const { Worker, isMainThread, parentPort } = require("worker_threads");
 
 if (isMainThread) {
   // Main thread
   const worker = new Worker(__filename);
 
-  worker.on('message', (result) => {
-    console.log('Result from worker:', result);
+  worker.on("message", (result) => {
+    console.log("Result from worker:", result);
   });
 
-  worker.postMessage('start');
+  worker.postMessage("start");
 } else {
   // This runs inside the worker thread
-  parentPort.on('message', () => {
+  parentPort.on("message", () => {
     const result = doHeavyComputation(); // CPU-intensive task
     parentPort.postMessage(result);
   });
@@ -362,6 +365,7 @@ These terms just describe what is slowing your program down:
 - **CPU-bound:** The bottleneck is raw computation — big loops, heavy math, image filters, encryption, video encoding. The CPU works hard, no waiting — just grinding. Here, single-threaded JS blocks everything. Worker Threads or clustering help by spreading this work across multiple cores.
 
 **Quick rule:**
+
 - File/network/database? → **I/O-bound** → use async (Event Loop)
 - Heavy math/processing? → **CPU-bound** → need parallelism (Worker Threads)
 
@@ -374,8 +378,8 @@ Worker Threads give you real multi-core power while staying inside one process �
 Clustering creates **multiple Node.js processes**, each with its own Event Loop and memory.
 
 ```js
-const cluster = require('cluster');
-const os = require('os');
+const cluster = require("cluster");
+const os = require("os");
 
 if (cluster.isPrimary) {
   const numCPUs = os.cpus().length;
@@ -384,7 +388,7 @@ if (cluster.isPrimary) {
   }
 } else {
   // Each worker runs the server
-  require('./server');
+  require("./server");
 }
 ```
 
@@ -401,13 +405,13 @@ if (cluster.isPrimary) {
 
 **Why do both exist?**
 
-- **Worker Threads** = *"I need my JS code to run fast on multiple cores without splitting the app."*
-- **Clustering** = *"I need to handle 10k users at once — spread the load."*
+- **Worker Threads** = _"I need my JS code to run fast on multiple cores without splitting the app."_
+- **Clustering** = _"I need to handle 10k users at once — spread the load."_
 
 In production, it depends on what you're solving:
 
 1. **When to use Clustering:**
-   If you need to scale your entire app to handle many simultaneous clients, use clustering. It creates multiple processes (often one per CPU core) so your app can handle far more incoming connections in parallel. It scales the *entire server*.
+   If you need to scale your entire app to handle many simultaneous clients, use clustering. It creates multiple processes (often one per CPU core) so your app can handle far more incoming connections in parallel. It scales the _entire server_.
 
 2. **When to use Worker Threads:**
    Ideal for offloading CPU-heavy tasks — like encryption, data parsing, or image processing — without blocking the main event loop. Use workers when you have isolated, intense computations that would otherwise slow down request handling for everyone else.
@@ -419,16 +423,16 @@ Clustering scales the entire server to handle more traffic. Worker threads handl
 
 ## 🔥 Final Mental Model
 
-| Concept | What it really is |
-|---|---|
-| **CPU** | The hardware that executes instructions |
-| **Core** | A physical execution unit inside the CPU |
-| **Logical Processor** | A virtual core (with Hyper-Threading) |
-| **Thread** | A unit of work the CPU executes |
-| **Process** | A running application with isolated memory |
-| **Kernel** | The OS component that schedules everything |
-| **Event Loop** | Node's mechanism for non-blocking I/O |
-| **libuv** | The library powering Node's async I/O and thread pool |
+| Concept               | What it really is                                     |
+| --------------------- | ----------------------------------------------------- |
+| **CPU**               | The hardware that executes instructions               |
+| **Core**              | A physical execution unit inside the CPU              |
+| **Logical Processor** | A virtual core (with Hyper-Threading)                 |
+| **Thread**            | A unit of work the CPU executes                       |
+| **Process**           | A running application with isolated memory            |
+| **Kernel**            | The OS component that schedules everything            |
+| **Event Loop**        | Node's mechanism for non-blocking I/O                 |
+| **libuv**             | The library powering Node's async I/O and thread pool |
 
 ---
 
@@ -445,9 +449,11 @@ Clustering scales the entire server to handle more traffic. Worker threads handl
 The concepts discussed above are demonstrated in fully working code examples inside this repository. Dive into the complete standalone guides here:
 
 👉 **[Event Loop Blocking vs Worker Threads](./blocking-vs-worker-threads/README.md)**
+
 - A practical test server proving how a single thread gets blocked and how `worker_threads` solve this issue on multiple cores.
 
 👉 **[Node.js Clustering Explained](./cluster-example/README.md)**
+
 - A standalone deployment showing how `cluster` handles parallel traffic natively on multi-core servers, with a deep breakdown of sticky sessions and zero downtime restarts.
 
 ## 🚀 Next Steps

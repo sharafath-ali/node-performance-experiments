@@ -1,0 +1,24 @@
+{
+  "name": "express-profiling-demo",
+  "version": "1.0.0",
+  "description": "Educational Node.js Express profiling demo using Clinic.js and Autocannon",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "profile:doctor:fast": "clinic doctor -- node server.js",
+    "profile:doctor:cpu": "clinic doctor -- node server.js",
+    "profile:doctor:leak": "clinic doctor -- node server.js",
+    "profile:flame": "clinic flame  -- node server.js",
+    "profile:heap": "clinic heapprofile -- node server.js",
+    "load:fast": "autocannon -c 1000 -d 10 http://localhost:3000/fast",
+    "load:slow-cpu": "autocannon -c 1000 -d 30 http://localhost:3000/slow-cpu",
+    "load:leak": "autocannon -c 1000  -d 60 http://localhost:3000/leak"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "clinic": "^13.0.0",
+    "autocannon": "^7.15.0"
+  }
+}

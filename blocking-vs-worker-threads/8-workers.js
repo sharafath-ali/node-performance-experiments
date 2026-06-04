@@ -1,4 +1,4 @@
-const { workerData, parentPort } = require('worker_threads');
+const { workerData, parentPort } = require("worker_threads");
 
 // A computationally heavy task identical to the one in server.js
 function doHeavyComputation() {

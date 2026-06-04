@@ -8,10 +8,10 @@ A minimal implementation of rate limiting in Node.js, along with a breakdown of 
 
 Without rate limiting, your system is vulnerable to:
 
-* **Abuse & Spam** — bots can flood endpoints
-* **Brute-force attacks** — especially on `/login`
-* **Resource exhaustion** — CPU & DB overload
-* **DDoS attacks** — service disruption
+- **Abuse & Spam** — bots can flood endpoints
+- **Brute-force attacks** — especially on `/login`
+- **Resource exhaustion** — CPU & DB overload
+- **DDoS attacks** — service disruption
 
 👉 Rate limiting ensures **fair usage and system stability**
 
@@ -25,9 +25,9 @@ This project implements a simple rule:
 
 ### Result:
 
-* First 5 requests → ✅ Allowed
-* 6th request → ❌ `429 Too Many Requests`
-* After 10 seconds → 🔄 Reset
+- First 5 requests → ✅ Allowed
+- 6th request → ❌ `429 Too Many Requests`
+- After 10 seconds → 🔄 Reset
 
 ![Rate Limiting Terminal Output](./image.png)
 
@@ -41,8 +41,8 @@ node server.js
 
 Test:
 
-* Open: http://localhost:3002
-* Refresh quickly to trigger the limit
+- Open: http://localhost:3002
+- Refresh quickly to trigger the limit
 
 ---
 
@@ -50,14 +50,14 @@ Test:
 
 In production, your app is usually behind:
 
-* Load balancers
-* Reverse proxies (NGINX)
-* CDNs
+- Load balancers
+- Reverse proxies (NGINX)
+- CDNs
 
 So this:
 
 ```js
-req.socket.remoteAddress
+req.socket.remoteAddress;
 ```
 
 ❌ Often gives **proxy IP**, not real user
@@ -68,14 +68,13 @@ req.socket.remoteAddress
 
 ```js
 const ip =
-  req.headers['x-forwarded-for']?.split(',')[0] ||
-  req.socket.remoteAddress;
+  req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
 ```
 
 If using Express:
 
 ```js
-app.set('trust proxy', true);
+app.set("trust proxy", true);
 ```
 
 ---
@@ -102,11 +101,11 @@ In production, you will have **multiple servers**.
 
 👉 Problem:
 
-* In-memory (`Map`) → ❌ Not shared
+- In-memory (`Map`) → ❌ Not shared
 
 👉 Solution:
 
-* Use **Redis**
+- Use **Redis**
 
 ---
 
@@ -134,8 +133,8 @@ In production, you will have **multiple servers**.
 
 Different endpoints need different limits:
 
-* `/login` → strict (5 req/min)
-* `/api/data` → relaxed (100 req/min)
+- `/login` → strict (5 req/min)
+- `/api/data` → relaxed (100 req/min)
 
 👉 Implement using middleware
 
@@ -169,8 +168,8 @@ Retry-After: 10
 
 A DDoS attack uses:
 
-* Thousands of machines (botnet)
-* Automated scripts (not humans)
+- Thousands of machines (botnet)
+- Automated scripts (not humans)
 
 👉 IP rate limiting alone is **not enough**
 
@@ -180,25 +179,25 @@ A DDoS attack uses:
 
 Handled by:
 
-* Cloudflare
-* AWS Shield
+- Cloudflare
+- AWS Shield
 
 ---
 
 ### How They Work
 
-* Detect abnormal traffic patterns
-* Identify bot behavior
-* Block or challenge requests
-* Filter traffic before it hits your server
+- Detect abnormal traffic patterns
+- Identify bot behavior
+- Block or challenge requests
+- Filter traffic before it hits your server
 
 ---
 
 ## 🔐 CAPTCHA (When Suspicious)
 
-* Triggered only for suspicious traffic
-* Forces human verification
-* Blocks automated bots
+- Triggered only for suspicious traffic
+- Forces human verification
+- Blocks automated bots
 
 👉 Not applied to all requests
 
@@ -218,21 +217,19 @@ Handled by:
 
 Rate limiting in production is **layered**:
 
-* **Application Layer** → enforce limits
-* **Redis** → shared state
-* **Infrastructure (CDN)** → block attacks
-* **CAPTCHA** → verify humans
+- **Application Layer** → enforce limits
+- **Redis** → shared state
+- **Infrastructure (CDN)** → block attacks
+- **CAPTCHA** → verify humans
 
 ---
 
 ## 🚀 Summary
 
-* for production always combine:
-
-  * Redis
-  * Proper IP detection
-  * Middleware
-  * Upstream protection
+- for production always combine:
+  - Redis
+  - Proper IP detection
+  - Middleware
+  - Upstream protection
 
 ---
-

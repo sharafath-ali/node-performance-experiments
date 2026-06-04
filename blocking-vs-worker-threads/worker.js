@@ -1,4 +1,4 @@
-const { parentPort } = require('worker_threads');
+const { parentPort } = require("worker_threads");
 
 // A computationally heavy task identical to the one in server.js
 function doHeavyComputation() {

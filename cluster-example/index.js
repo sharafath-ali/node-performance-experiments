@@ -1,6 +1,6 @@
-const cluster = require('cluster');
-const express = require('express');
-const os = require('os');
+const cluster = require("cluster");
+const express = require("express");
+const os = require("os");
 
 const numCPUs = os.cpus().length;
 
@@ -12,7 +12,7 @@ if (cluster.isPrimary) {
     cluster.fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
+  cluster.on("exit", (worker, code, signal) => {
     console.log(`worker ${worker.process.pid} died`);
     // Optionally start a new worker
     cluster.fork();
@@ -22,18 +22,20 @@ if (cluster.isPrimary) {
   // In this case it is an HTTP server
   const app = express();
 
-  app.get('/', (req, res) => {
+  app.get("/", (req, res) => {
     res.send(`Hello from Worker ${process.pid}`);
   });
 
   // A CPU intensive task to demonstrate the benefit of clustering
-  app.get('/heavy', (req, res) => {
+  app.get("/heavy", (req, res) => {
     let total = 0;
     // Simulate some heavy work
     for (let i = 0; i < 50_000_000_000_000_000_000; i++) {
-        total++;
+      total++;
     }
-    res.send(`The result of the CPU intensive task is ${total}\nWorker ${process.pid} handled this request`);
+    res.send(
+      `The result of the CPU intensive task is ${total}\nWorker ${process.pid} handled this request`,
+    );
   });
 
   const PORT = process.env.PORT || 3000;
