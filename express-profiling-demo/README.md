@@ -211,7 +211,7 @@ npm run load:leak              # autocannon /leak       5c 60s
 
 ## ⚠️ Avoiding OOM Crashes During `/leak` Profiling
 
-Running `/leak` with high concurrency (e.g. `-c 1000`) will exhaust the Node.js heap before
+Running `/leak` with high concurrency (e.g. `-c 1000`) will exhaust the Node.js heap before      
 Clinic has a chance to write its trace files, causing:
 
 ```
@@ -264,3 +264,28 @@ When hitting `/slow-cpu`, Clinic Doctor detects two problems immediately:
 **Clinic Doctor report** — CPU Usage and Event Loop Delay both flagged red:
 
 ![Clinic Doctor showing CPU spike and event loop delay from the slow-cpu route](./clinic-cpu-profiling/cpuissue.png)
+
+---
+
+## 🔥 Clinic Flame — Hottest Frame Comparison
+
+Clinic Flame pinpoints **exactly which file and line** is consuming the most CPU.
+The difference between a healthy and a broken endpoint is stark:
+
+### ✅ `/fast` — Hottest frame: `fast.route.js` @ **3.2%**
+
+The hottest frame is the anonymous route handler in `fast.route.js` line 7 — only **3.2%** of CPU time.
+This is normal overhead from Express routing. The flame graph is nearly empty because the handler returns immediately.
+
+![Clinic Flame for /fast — fast.route.js hottest frame at 3.2%](./clinic-cpu-profiling/flame-fast.png)
+
+### ❌ `/slow-cpu` — Hottest frame: `slowCpu.route.js` @ **15.2%**
+
+The hottest frame jumps to `slowCpu.route.js` line 10 — **15.2%** of total CPU time consumed by a single frame.
+This is the 500M-iteration `for` loop. Clinic Flame points you straight to the file, line, and column responsible.
+
+![Clinic Flame for /slow-cpu — slowCpu.route.js hottest frame at 15.2%](./clinic-cpu-profiling/flame-slowcpu.png)
+
+> **Key takeaway:** A healthy endpoint's hottest frame is just a few percent. When a single frame
+> dominates at 15%+ (or much higher under real load), that is your bottleneck. The file path and
+> line number shown in the top bar tell you exactly where to fix it.
