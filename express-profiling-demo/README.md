@@ -245,3 +245,16 @@ npx autocannon -c 5 -d 30 http://localhost:3000/leak
 ```
 
 The same applies to `clinic flame` and `clinic heapprofile` against the `/leak` endpoint.
+
+---
+
+## 🔴 CPU Bottleneck — Clinic Doctor Report
+
+When hitting `/slow-cpu`, Clinic Doctor detects two problems immediately:
+
+- **CPU Usage** ⚠️ — spikes to 600%+ then holds a constant elevated baseline (the blocking loop consuming the entire thread)
+- **Event Loop Delay** ⚠️ — flatlines at tens of thousands of milliseconds, meaning no other request can be processed while the loop runs
+
+**Clinic Doctor report** — CPU Usage and Event Loop Delay both flagged red:
+
+![Clinic Doctor showing CPU spike and event loop delay from the slow-cpu route](./clinic-cpu-profiling/cpuissue.png)
