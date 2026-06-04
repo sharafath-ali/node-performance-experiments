@@ -219,6 +219,13 @@ FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memor
 Error: No files matching the pattern found
 ```
 
+> **What that output means:** Right before the crash, your heap usage reached around **4 GB**.
+> Node's garbage collector was trying to keep the heap under that limit, but the allocation
+> demand from the leak kept growing faster than GC could free memory — so it hit the hard
+> ceiling and the process was killed.
+
+![Node.js heap growing to 4 GB and hitting the OOM limit](./clinic-memory-leak-profiling/node_oom_heap_diagram.png)
+
 **Use low concurrency** so the process survives long enough for Clinic to collect data and generate the report:
 
 ```bash
