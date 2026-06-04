@@ -217,6 +217,8 @@ Error: No files matching the pattern found
 > demand from the leak kept growing faster than GC could free memory — so it hit the hard
 > ceiling and the process was killed.
 
+![Node.js heap growing monotonically until it hits the 4 GB limit and crashes](./clinic-memory-leak-profiling/node_oom_heap_diagram.png)
+
 **Clinic Doctor report** — Memory Usage (top-right) climbs steadily to ~3,000 MB then flatlines at the heap limit before the crash:
 
 ![Clinic Doctor showing memory usage climbing to 4 GB](./clinic-memory-leak-profiling/memoryissue.png)
