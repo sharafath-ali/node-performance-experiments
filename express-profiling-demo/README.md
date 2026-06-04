@@ -206,3 +206,29 @@ npm run load:leak              # autocannon /leak       5c 60s
 - Let load run for at least **20–30 seconds** so Clinic collects enough samples.
 - The `.clinic/` output directory is already in `.gitignore`.
 - Each Clinic run creates a timestamped sub-folder inside `.clinic/` — old reports are preserved.
+
+---
+
+## ⚠️ Avoiding OOM Crashes During `/leak` Profiling
+
+Running `/leak` with high concurrency (e.g. `-c 1000`) will exhaust the Node.js heap before
+Clinic has a chance to write its trace files, causing:
+
+```
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+Error: No files matching the pattern found
+```
+
+**Use low concurrency** so the process survives long enough for Clinic to collect data and generate the report:
+
+```bash
+# Terminal 1 — start under Clinic
+npx clinic doctor -- node server.js
+
+# Terminal 2 — low concurrency, long enough duration
+npx autocannon -c 5 -d 30 http://localhost:3000/leak
+
+# Terminal 1 — Ctrl+C → report generates successfully
+```
+
+The same applies to `clinic flame` and `clinic heapprofile` against the `/leak` endpoint.
