@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "inspect": "node --inspect server.js",
     "profile:doctor:fast": "clinic doctor -- node server.js",
     "profile:doctor:cpu": "clinic doctor -- node server.js",
     "profile:doctor:leak": "clinic doctor -- node server.js",
