@@ -284,3 +284,11 @@ This is the 500M-iteration `for` loop. Clinic Flame points you straight to the f
 > **Key takeaway:** A healthy endpoint's hottest frame is just a few percent. When a single frame
 > dominates at 15%+ (or much higher under real load), that is your bottleneck. The file path and
 > line number shown in the top bar tell you exactly where to fix it.
+
+---
+
+## References
+
+| Guide | Description |
+|---|---|
+| [HEAP_SNAPSHOT.md](./HEAP_SNAPSHOT.md) | Step-by-step guide to capturing and analysing a V8 heap snapshot using Chrome DevTools |
