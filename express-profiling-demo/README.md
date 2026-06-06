@@ -202,20 +202,16 @@ npm run load:leak              # autocannon /leak       5c 60s
 ---
 
 
-## ⚠️ Avoiding OOM Crashes During `/leak` Profiling
+## Out-of-Memory Crash Risk When Profiling `/leak`
 
-Running `/leak` with high concurrency (e.g. `-c 1000`) will exhaust the Node.js heap before      
-Clinic has a chance to write its trace files, causing:
+Running `/leak` with high concurrency (e.g. `-c 1000`) exhausts the Node.js heap before Clinic has a chance to write its trace files, causing:
 
 ```
 FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 Error: No files matching the pattern found
 ```
 
-> **What that output means:** Right before the crash, your heap usage reached around **4 GB**.
-> Node's garbage collector was trying to keep the heap under that limit, but the allocation
-> demand from the leak kept growing faster than GC could free memory — so it hit the hard
-> ceiling and the process was killed.
+> The heap grows faster than the garbage collector can free memory. Once it hits the hard ceiling (~4 GB by default), the process is killed and no report is generated.
 
 ![Node.js heap growing monotonically until it hits the 4 GB limit and crashes](./clinic-memory-leak-profiling/node_oom_heap_diagram.png)
 
@@ -241,7 +237,7 @@ npx autocannon -c 5 -d 30 http://localhost:3000/leak
 
 The same applies to `clinic flame` and `clinic heapprofile` against the `/leak` endpoint.
 
-> **Similarly for the CPU bottleneck:** When hitting `/slow-cpu` with high concurrency,
+> **Note on the CPU bottleneck:** When hitting `/slow-cpu` with high concurrency,
 > Clinic Doctor flags **CPU Usage** and **Event Loop Delay** — the 500M-iteration
 > synchronous loop pegs the main thread, so no other request can be handled until it finishes.
 > The event loop delay flatlines at tens of thousands of milliseconds, which is the clearest
