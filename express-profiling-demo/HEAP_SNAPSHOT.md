@@ -54,14 +54,13 @@ Select **`Heap snapshot`** (it is the default option).
 
 Before taking the snapshot, generate memory activity so there is something meaningful to inspect.
 
-Open a **new terminal** and run:
+Open your **browser** and visit:
 
-```bash
-# Hit the leak endpoint to build up memory
-npm run load:leak
+```
+http://localhost:3000/leak
 ```
 
-This sends sustained traffic to `/leak` for 60 seconds, growing the heap with each request.
+Refresh the page several times (or keep hitting **F5**) to send multiple requests to the leak endpoint, growing the heap with each request.
 
 ---
 
@@ -99,7 +98,7 @@ Switch the view dropdown to **`Comparison`** and select a baseline snapshot to d
 Take **three snapshots** with load between each to isolate growing objects:
 
 ```
-[Snapshot 1] → npm run load:leak → [Snapshot 2] → npm run load:leak → [Snapshot 3]
+[Snapshot 1] → GET http://localhost:3000/leak (×300) → [Snapshot 2] → GET http://localhost:3000/leak (×300) → [Snapshot 3]
 ```
 
 1. Open **Snapshot 3**
