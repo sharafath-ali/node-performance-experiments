@@ -288,3 +288,5 @@ This is the 500M-iteration `for` loop. Clinic Flame points you straight to the f
 | Guide | Description |
 |---|---|
 | [HEAP_SNAPSHOT.md](./HEAP_SNAPSHOT.md) | Step-by-step guide to capturing and analysing a V8 heap snapshot using Chrome DevTools |
+| [NODE_MEMORY.md](./NODE_MEMORY.md) | Breakdown of all Node.js memory regions — heap, buffers, runtime, stack, native modules, and worker threads |
+| [CPU_PROFILER.md](./CPU_PROFILER.md) | Recording and viewing a `.cpuprofile` with the VS Code manual CPU profiler + `vscode-js-profile-flame` flame chart extension |
